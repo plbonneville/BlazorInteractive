@@ -6,7 +6,6 @@ using Microsoft.DotNet.Interactive;
 using Microsoft.DotNet.Interactive.Commands;
 using Microsoft.DotNet.Interactive.CSharp;
 using Microsoft.DotNet.Interactive.Events;
-using Microsoft.DotNet.Interactive.FSharp;
 using Microsoft.DotNet.Interactive.Tests.Utility;
 using Xunit;
 
@@ -20,8 +19,7 @@ namespace BlazorInteractive.Tests
         {
             _kernel = new CompositeKernel
             {
-                new CSharpKernel(),
-                new FSharpKernel()
+                new CSharpKernel()
             };
 
             Task.Run(() => new BlazorKernelExtension().OnLoadAsync(_kernel))
@@ -136,6 +134,30 @@ namespace BlazorInteractive.Tests
                 .Contain("Current count: 0")
                 .And
                 .Contain("Click me");
+        }
+
+        [Fact]
+        public async Task It_renders_html_and_not_html_encoded_html()
+        {
+            // Arrange
+            using var events = _kernel.KernelEvents.ToSubscribedList();
+
+            // Act
+            await _kernel.SubmitCodeAsync(@"#!blazor
+            <h1>hello world</h1>");
+
+            // Assert
+            KernelEvents
+                .Should()
+                .ContainSingle<DisplayEvent>()
+                .Which
+                .FormattedValues
+                .Should()
+                .ContainSingle(v => v.MimeType == "text/html")
+                .Which
+                .Value
+                .Should()
+                .Contain("<h1>hello world</h1>");
         }
     }
 }

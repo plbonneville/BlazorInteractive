@@ -6,6 +6,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.DotNet.Interactive;
 using Microsoft.DotNet.Interactive.Commands;
+using Microsoft.DotNet.Interactive.Formatting;
 
 namespace BlazorInteractive
 {
@@ -46,7 +47,11 @@ namespace BlazorInteractive
 
                         var markup = cut.Markup;
 
-                        context.Display(markup, "text/html");
+                        var id = "blazorExtension" + Guid.NewGuid().ToString("N");
+
+                        var result = Html.ToHtmlContent($"<div id=\"{id}\">{markup}</div>");
+
+                        context.Display(result, "text/html");
                     }
                     catch (Exception e)
                     {
