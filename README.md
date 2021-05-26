@@ -1,5 +1,7 @@
 # .NET Interactive Nootbooks Blazor Extension
 
+[![NuGet version (BlazorInteractive)](https://img.shields.io/nuget/v/BlazorInteractive.svg)](https://www.nuget.org/packages/BlazorInteractive/)
+
 To get started with Blazor in .NET Interactive Notebooks, first install the `BlazorInteractive` NuGet package. In a new `C# (.NET Interactive)` cell enter and run the following:
 
 ```
