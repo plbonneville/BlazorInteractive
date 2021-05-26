@@ -1,0 +1,3 @@
+[submodule "src/BlazorRepl"]
+	path = src/BlazorRepl
+	url = https://github.com/BlazorRepl/BlazorRepl.git
