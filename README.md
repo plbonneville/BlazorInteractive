@@ -3,7 +3,7 @@
 To get started with Blazor in .NET Interactive Notebooks, first install the `BlazorInteractive` NuGet package. In a new `C# (.NET Interactive)` cell enter and run the following:
 
 ```
-#r "nuget: BlazorInteractive, 1.0.0"
+#r "nuget: BlazorInteractive, 1.0.2-alpha1"
 ```
 
 Using the `#!Blazor` magic command your code cell will be parsed by a Blazor engine and the results displayed using the `"txt/html"` mime type.
