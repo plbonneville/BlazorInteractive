@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+    <IsPackable>true</IsPackable>
+    <PackageDescription>Renders Blazor markup in dotnet-interactive notebooks.</PackageDescription>
+    <Version>1.0.0</Version>
+    <NoWarn>$(NoWarn);NU5100,NU5104,IDE0003</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <IncludeSymbols>true</IncludeSymbols>
+    <Authors>Pier-Luc Bonneville</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/plbonneville/BlazorInteractive</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="bin\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <None Remove="bin\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\BlazorRepl\Core\CodeFile.cs" Link="BlazorRepl\CodeFile.cs" />
+    <Compile Include="..\BlazorRepl\Core\CodeFileType.cs" Link="BlazorRepl\CodeFileType.cs" />
+    <Compile Include="..\BlazorRepl\Core\CompilationDiagnostic.cs" Link="BlazorRepl\CompilationDiagnostic.cs" />
+    <Compile Include="..\BlazorRepl\Core\CompilationDiagnosticKind.cs" Link="BlazorRepl\CompilationDiagnosticKind.cs" />
+    <Compile Include="..\BlazorRepl\Core\CompilationService.cs" Link="BlazorRepl\CompilationService.cs" />
+    <Compile Include="..\BlazorRepl\Core\CompileToAssemblyResult.cs" Link="BlazorRepl\CompileToAssemblyResult.cs" />
+    <Compile Include="..\BlazorRepl\Core\CompileToCSharpResult.cs" Link="BlazorRepl\CompileToCSharpResult.cs" />
+    <Compile Include="..\BlazorRepl\Core\CoreConstants.cs" Link="BlazorRepl\CoreConstants.cs" />
+    <Compile Include="..\BlazorRepl\Core\NotFoundProjectItem.cs" Link="BlazorRepl\NotFoundProjectItem.cs" />
+    <Compile Include="..\BlazorRepl\Core\VirtualProjectFileSystem.cs" Link="BlazorRepl\VirtualProjectFileSystem.cs" />
+    <Compile Include="..\BlazorRepl\Core\VirtualProjectItem.cs" Link="BlazorRepl\VirtualProjectItem.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutputPath)/BlazorInteractive.dll" Pack="true" PackagePath="interactive-extensions/dotnet" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="bunit" Version="1.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="5.0.6" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="5.0.6" />
+    <PackageReference Include="Microsoft.DotNet.Interactive" Version="1.0.0-beta.21181.2" />
+    <PackageReference Include="Microsoft.DotNet.Interactive.CSharp" Version="1.0.0-beta.21181.2" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.1" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+  </ItemGroup>
+
+</Project>

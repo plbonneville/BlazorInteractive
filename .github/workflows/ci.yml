@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Setup dotnet 5.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.300
+
+      - name: Install dependencies
+        run: dotnet restore ./src/BlazorInteractive
+
+      - name: Install dependencies for unit tests
+        run: dotnet restore ./tests/BlazorInteractive.Tests
+
+      - name: Build
+        run: dotnet build --nologo --configuration Release --no-restore ./src/BlazorInteractive
+
+      - name: Test
+        run: dotnet test --nologo --no-restore --verbosity normal ./tests/BlazorInteractive.Tests
+
+      - name: Publish NuGet
+        uses: brandedoutcast/publish-nuget@v2.5.5
+        with:
+          # Filepath of the project to be packaged, relative to root of repository
+          PROJECT_FILE_PATH: ./src/BlazorInteractive/BlazorInteractive.csproj
+
+          # API key to authenticate with NuGet server
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
