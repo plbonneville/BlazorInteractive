@@ -11,7 +11,7 @@ using Microsoft.DotNet.Interactive.FSharp;
 using Microsoft.DotNet.Interactive.Tests.Utility;
 using Xunit;
 
-namespace BlazorInteractive.Tests
+namespace BlazorInteractive.IntegrationTests
 {
     public sealed class BlazorInteractiveTests : IDisposable
     {
@@ -45,140 +45,101 @@ namespace BlazorInteractive.Tests
         }
 
         [Fact]
-        public async Task It_is_registered_as_a_directive()
+        public async Task It_can_reference_a_component_defined_in_previous_compilation()
         {
             // Arrange
+            await _kernel.SubmitCodeAsync(@"#!blazor
+                <h1>hello world</h1>");
+
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
             // Act
-            await _kernel.SubmitCodeAsync("#!blazor");
+            await _kernel.SubmitCodeAsync(@"typeof(__Main).Name");
 
             // Assert
-            KernelEvents
+            events
+                .Should()
+                .ContainSingle<DisplayEvent>()
+                .Which
+                .FormattedValues
+                .Should()
+                .ContainSingle(v => v.MimeType == "text/plain")
+                .Which
+                .Value
+                .Should()
+                .Be("__Main");
+        }
+
+        [Fact]
+        public async Task It_can_instantiate_a_component_defined_in_previous_compilation()
+        {
+            // Arrange
+            await _kernel.SubmitCodeAsync(@"#!blazor
+                <h1>hello world</h1>");
+
+            using var events = _kernel.KernelEvents.ToSubscribedList();
+
+            // Act
+            await _kernel.SubmitCodeAsync(@"var component = new __Main();");
+
+            // Assert
+            events
                 .Should()
                 .ContainSingle<CommandSucceeded>()
                 .Which
-                .Command
+                .Command.As<SubmitCode>()
+                .Code
                 .Should()
-                .Equals("#!blazor");
+                .Be("var component = new __Main();");
         }
 
         [Fact]
-        public async Task It_formats_BlazorCode_as_html()
+        public async Task It_can_reference_a_named_component_defined_in_previous_compilation()
         {
             // Arrange
+            await _kernel.SubmitCodeAsync(@"#!blazor --name HelloWorld
+                <h1>hello world</h1>");
+
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
             // Act
-            await _kernel.SubmitCodeAsync(@"#!blazor
-<h1>hello world</h1>");
+            await _kernel.SubmitCodeAsync(@"typeof(HelloWorld).Name");
 
             // Assert
-            KernelEvents
+            events
                 .Should()
                 .ContainSingle<DisplayEvent>()
                 .Which
                 .FormattedValues
                 .Should()
-                .ContainSingle(v => v.MimeType == "text/html");
-        }
-
-        [Fact]
-        public async Task It_interprets_BlazorCode()
-        {
-            // Arrange
-            const string code = @"#!blazor
-<h1>Hello world @name!</h1>
-
-@code {
-    string name = ""Alice"";
-}";
-
-            using var events = _kernel.KernelEvents.ToSubscribedList();
-
-            // Act
-            await _kernel.SubmitCodeAsync(code);
-
-            // Assert
-            KernelEvents
-                .Should()
-                .ContainSingle<DisplayEvent>()
-                .Which
-                .FormattedValues
-                .Should()
-                .ContainSingle(v => v.MimeType == "text/html")
+                .ContainSingle(v => v.MimeType == "text/plain")
                 .Which
                 .Value
                 .Should()
-                .Contain("Hello world Alice!");
+                .Be("HelloWorld");
         }
 
         [Fact]
-        public async Task It_interpret_BlazorCode_with_a_method()
+        public async Task It_can_instantiate_a_named_component_defined_in_previous_compilation()
         {
             // Arrange
-            const string code = @"#!blazor
-<h1>Counter</h1>
-
-<p>
-    Current count: @currentCount
-</p>
-
-<button class=""btn btn-primary"" @onclick=""IncrementCount"">Click me</button>
-
-@code {
-                int currentCount = 0;
-
-                void IncrementCount()
-                {
-                    currentCount++;
-                }
-            }
-            ";
+            await _kernel.SubmitCodeAsync(@"#!blazor -n HelloWorld
+                <h1>hello world</h1>");
 
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
             // Act
-            await _kernel.SubmitCodeAsync(code);
+            await _kernel.SubmitCodeAsync(@"var component = new HelloWorld();");
 
             // Assert
-            KernelEvents
+            events
                 .Should()
-                .ContainSingle<DisplayEvent>()
+                .ContainSingle<CommandSucceeded>()
                 .Which
-                .FormattedValues
+                .Command.As<SubmitCode>()
+                .Code
                 .Should()
-                .ContainSingle(v => v.MimeType == "text/html")
-                .Which
-                .Value
-                .Should()
-                .Contain("Current count: 0")
-                .And
-                .Contain("Click me");
-        }
-
-        [Fact]
-        public async Task It_renders_html_and_not_html_encoded_html()
-        {
-            // Arrange
-            using var events = _kernel.KernelEvents.ToSubscribedList();
-
-            // Act
-            await _kernel.SubmitCodeAsync(@"#!blazor
-            <h1>hello world</h1>");
-
-            // Assert
-            KernelEvents
-                .Should()
-                .ContainSingle<DisplayEvent>()
-                .Which
-                .FormattedValues
-                .Should()
-                .ContainSingle(v => v.MimeType == "text/html")
-                .Which
-                .Value
-                .Should()
-                .Contain("<h1>hello world</h1>");
+                .Be("var component = new HelloWorld();");
         }
     }
 }
