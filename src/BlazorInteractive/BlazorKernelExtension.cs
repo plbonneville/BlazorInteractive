@@ -53,14 +53,7 @@ namespace BlazorInteractive
                 HtmlFormatter.MimeType,
                 message.ToDisplayString(HtmlFormatter.MimeType));
 
-            var webAssemblyVersion = AppDomain.CurrentDomain.GetAssemblies()
-                .First(x => x.GetName().Name == "Microsoft.AspNetCore.Components.WebAssembly")
-                .GetName()
-                .Version
-                .ToString();
-
-            // Load the required NuGet package
-            await kernel.SubmitCodeAsync($@"#r ""nuget: Microsoft.AspNetCore.Components.WebAssembly, {webAssemblyVersion}""");
+            await kernel.SubmitCodeAsync(@"#r ""nuget: Microsoft.AspNetCore.Components.WebAssembly, 5.0.6""");
 
             await kernel.SendAsync(new DisplayValue(formattedValue, Guid.NewGuid().ToString()));
         }
