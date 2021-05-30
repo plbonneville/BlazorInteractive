@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorInteractice.IntegrationTests", "tests\BlazorInteractice.IntegrationTests\BlazorInteractice.IntegrationTests.csproj", "{6B25C2A3-276C-4616-8231-06DF3B10463A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorInteractive.IntegrationTests", "tests\BlazorInteractive.IntegrationTests\BlazorInteractive.IntegrationTests.csproj", "{6B25C2A3-276C-4616-8231-06DF3B10463A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

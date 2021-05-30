@@ -7,41 +7,24 @@ using Microsoft.DotNet.Interactive.Commands;
 
 namespace BlazorInteractive
 {
-    public class BlazorKernel : Kernel, IKernelCommandHandler<SubmitCode>
+    public class BlazorKernel :
+        Kernel,
+        IKernelCommandHandler<SubmitCode>,
+        IKernelCommandHandler<SubmitBlazorCode>
+
     {
-        public BlazorKernel() : base("blazor")
+        public BlazorKernel() : base("blazor-kernel")
         {
         }
 
         public Task HandleAsync(SubmitCode command, KernelInvocationContext context)
-        {
-            var componentName = GetComponentName(command.Parent as SubmitCode);
+            => HandleAsync(SubmitBlazorCode.From(command), context);
 
-            var markdown = new BlazorMarkdown(command.Code, componentName);
+        public Task HandleAsync(SubmitBlazorCode command, KernelInvocationContext context)
+        {
+            var markdown = new BlazorMarkdown(command.Code, command.ComponentName);
             context.Display(markdown);
             return Task.CompletedTask;
-        }
-
-        private static string GetComponentName(SubmitCode command)
-        {
-            _ = command ?? throw new ArgumentNullException(nameof(command));
-
-            /*
-                #!blazor -n HelloWorld
-                <h1>hello world</h1>
-
-                or
-
-                #!blazor --name HelloWorld
-                <h1>hello world</h1>
-            */
-            const string pattern = @"#!blazor -n (?<name>\w+)|--name (?<name>\w+)";
-
-            var regex = new Regex(pattern);
-            var result = regex.Match(command.Code);
-            var componentName = result.Success ? result.Groups["name"].Value : "__Main";
-
-            return componentName;
         }
     }
 }
