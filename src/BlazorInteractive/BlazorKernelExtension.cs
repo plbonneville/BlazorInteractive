@@ -1,7 +1,4 @@
 ﻿using System;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Html;
@@ -58,27 +55,6 @@ namespace BlazorInteractive
             await kernel.SubmitCodeAsync(@"#r ""nuget: Microsoft.AspNetCore.Components.WebAssembly, 5.0.6""");
 
             await kernel.SendAsync(new DisplayValue(formattedValue, Guid.NewGuid().ToString()));
-
-            var command = new Command("#!blazor", "Compile and render Razor components (.razor).")
-            {
-                new Option<string>(new[]{"-n","--name"},
-                                    "The Razor component's (.razor) type name. The default value is '__Main'"),
-            };
-
-            command.Handler = CommandHandler.Create<string, KernelInvocationContext>(async (name, context) =>
-            {
-                if (kernel.FindKernel("blazor-kernel") is BlazorKernel blazorKernel)
-                {
-                    var blazorCommand = SubmitBlazorCode.From(context.Command as SubmitCode, name);
-
-                    await blazorKernel.HandleAsync(blazorCommand, context);
-
-                    // Mark the command as being completed to stop the pipeline
-                    context.Complete(context.Command);
-                }
-            });
-
-            kernel.AddDirective(command);
         }        
     }
 }
