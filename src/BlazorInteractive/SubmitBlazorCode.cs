@@ -22,8 +22,8 @@ namespace BlazorInteractive
 
         public static SubmitBlazorCode From(SubmitCode submitCode, string componentName = DefaultComponentName)
         {
-            var regex = new Regex("^#!blazor");
-            var code = regex.Replace(submitCode.Code, "#!blazor-kernel");
+            var regex = new Regex(@"^#!blazor ?((-n \w+)|(--name \w+))?");
+            var code = regex.Replace(submitCode.Code, "");
 
             var command = new SubmitBlazorCode(componentName, code, submitCode.TargetKernelName, submitCode.SubmissionType);
 
