@@ -72,6 +72,9 @@ namespace BlazorInteractive
                     var blazorCommand = SubmitBlazorCode.From(context.Command as SubmitCode, name);
 
                     await blazorKernel.HandleAsync(blazorCommand, context);
+
+                    // Mark the command as being completed to stop the pipeline
+                    context.Complete(context.Command);
                 }
             });
 
