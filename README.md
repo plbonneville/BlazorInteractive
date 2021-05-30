@@ -4,37 +4,43 @@
 
 Compile and render Razor components (.razor) in .NET Interactive Notebooks.
 
-## Get started
+## 🎯 Table of content
 
-To get started with Blazor in .NET Interactive Notebooks, first install the `BlazorInteractive` NuGet package. In a new `C# (.NET Interactive)` cell enter and run the following:
+- [Get started](#-get-started)
+- [Usage](#-usage)
+- [How to compile this project](#-how-to-compile-this-project)
+
+## ❤️ Built With
+
+- [Blazor REPL](https://github.com/BlazorRepl/BlazorRepl)
+- [.NET Interactive ](https://github.com/dotnet/interactive)
+
+## ⚙️ Get started
+
+To get started with Blazor in .NET Interactive Notebooks, first install the `BlazorInteractive` NuGet package.
+
+In a new `C# (.NET Interactive)` cell enter and run the following:
 
 ```
-#r "nuget: BlazorInteractive, 1.0.3-alpha.1"
+#r "nuget: BlazorInteractive, 1.0.4-alpha.1"
 ```
 
-Using the `#!Blazor` magic command your code cell will be parsed by a Blazor engine and the results displayed using the `"txt/html"` mime type.
+## ⚡️ Usage
+
+Using the `#!blazor` magic command your code cell will be parsed by a Blazor engine and the results displayed using the `"txt/html"` mime type.
 
 ```razor
 #!blazor
-<h1>Counter</h1>
-
-<p>
-    Current count: @currentCount
-</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<h1>Hello @name</h1>
 
 @code {
-  int currentCount = 0;
-
-  void IncrementCount()
-  {
-    currentCount++;
-  }
+    string name = "Alice";
 }
 ```
 
-## How to compile this project
+![hello world](img/example1.jpg)
+
+## 🌱 How to compile this project
 
 Since this project requires a git submodule, you'll need to initialize and update the [Blazor REPL](https://github.com/BlazorRepl/BlazorRepl) submodule.
 

@@ -21,15 +21,24 @@ using Microsoft.CodeAnalysis.Razor;
 
 namespace BlazorInteractive
 {
-    public class BlazorCompilationService
+    internal class BlazorCompilationService
     {
         public const string DefaultRootNamespace = "BlazorRepl.UserComponents";
 
         private const string WorkingDirectory = "/BlazorRepl/";
-        private const string DefaultImports = @"@using System.ComponentModel.DataAnnotations
+        //        private const string DefaultImports = @"@using System.ComponentModel.DataAnnotations
+        //@using System.Linq
+        //@using System.Net.Http
+        //@using System.Net.Http.Json
+        //@using Microsoft.AspNetCore.Components.Forms
+        //@using Microsoft.AspNetCore.Components.Routing
+        //@using Microsoft.AspNetCore.Components.Web
+        //@using Microsoft.JSInterop";
+
+        // TODO: Figure out why the `System.ComponentModel.DataAnnotations` and `System.Net.Http.Json` usings aren't working
+        private const string DefaultImports = @"
 @using System.Linq
 @using System.Net.Http
-@using System.Net.Http.Json
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
@@ -96,7 +105,9 @@ namespace BlazorInteractive
                     }));
         }
 
-        public async Task<CompileToAssemblyResult> CompileToAssemblyAsync(
+        public string S { get; }
+
+        public async Task<(CompileToAssemblyResult, string)> CompileToAssemblyAsync(
             ICollection<CodeFile> codeFiles,
             Func<string, Task> updateStatusFunc) // TODO: try convert to event
         {
@@ -111,7 +122,7 @@ namespace BlazorInteractive
 
             var result = this.CompileToAssembly(cSharpResults);
 
-            return result;
+            return (result, cSharpResults[0].Code);
         }
 
         private static RazorProjectItem CreateRazorProjectItem(string fileName, string fileContent)

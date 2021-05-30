@@ -7,97 +7,38 @@ using BlazorRepl.Core;
 
 namespace BlazorInteractive
 {
-    public class BlazorAssemblyCompiler
+    internal class BlazorAssemblyCompiler
     {
-        private const string MainComponentCodePrefix = "@page \"/__main\"\n";
-
-        public BlazorAssemblyCompiler(string code)
+        public BlazorAssemblyCompiler(string code, string componentName)
         {
-            CodeFiles.Add("__Main.razor", new CodeFile() { Content = code, Path = "__Main.razor" });
+            CodeFiles.Add($"{componentName}.razor", new CodeFile { Content = code, Path = $"{componentName}.razor" });
         }
 
-        //[Inject]
-        public BlazorCompilationService CompilationService { get; set; }// = new BlazorCompilationService();
+        public BlazorCompilationService CompilationService { get; init; }
 
-        public IReadOnlyCollection<CompilationDiagnostic> Diagnostics { get; set; } = Array.Empty<CompilationDiagnostic>();
-
-        private bool AreDiagnosticsShown { get; set; }
-
-        private string LoaderText { get; set; }
-
-        private bool ShowLoader { get; set; }
+        public IReadOnlyCollection<CompilationDiagnostic> Diagnostics { get; private set; } = Array.Empty<CompilationDiagnostic>();
 
         private IDictionary<string, CodeFile> CodeFiles { get; } = new Dictionary<string, CodeFile>();
 
-        public async Task<CompileToAssemblyResult> CompileAsync()
+        public async Task<(CompileToAssemblyResult, string)> CompileAsync()
         {
-            this.ShowLoader = true;
-            this.LoaderText = "Processing";
-
-            await Task.Delay(1); // Ensure rendering has time to be called
-
-            //if (this.PackagesToRestore.Any())
-            //{
-            //    await this.PackageManagerComponent.RestorePackagesAsync();
-            //}
-
+            string code = null;
             CompileToAssemblyResult compilationResult = null;
-            CodeFile mainComponent = null;
-            string originalMainComponentContent = null;
+
             try
             {
-                ////////this.UpdateActiveCodeFileContent();
+                (compilationResult, code) = await CompilationService.CompileToAssemblyAsync(
+                    CodeFiles.Values,
+                    _ => Task.CompletedTask);
 
-                // Add the necessary main component code prefix and store the original content so we can revert right after compilation.
-                if (this.CodeFiles.TryGetValue(CoreConstants.MainComponentFilePath, out mainComponent))
-                {
-                    originalMainComponentContent = mainComponent.Content;
-                    mainComponent.Content = MainComponentCodePrefix + originalMainComponentContent;
-                }
-
-                compilationResult = await this.CompilationService.CompileToAssemblyAsync(
-                    this.CodeFiles.Values,
-                    this.UpdateLoaderTextAsync);
-
-                this.Diagnostics = compilationResult.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
-                this.AreDiagnosticsShown = true;
+                Diagnostics = compilationResult.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                ////this.PageNotificationsComponent.AddNotification(NotificationType.Error, content: "Error while compiling the code.");
-            }
-            finally
-            {
-                if (mainComponent != null)
-                {
-                    mainComponent.Content = originalMainComponentContent;
-                }
-
-                this.ShowLoader = false;
+                throw new Exception("Error while compiling the code.", e);
             }
 
-            if (compilationResult?.AssemblyBytes?.Length > 0)
-            {
-                ////// Make sure the DLL is updated before reloading the user page
-                ////await this.JsRuntime.InvokeVoidAsync("App.CodeExecution.updateUserComponentsDll", compilationResult.AssemblyBytes);
-
-                ////var userPagePath = this.InstalledPackagesCount > 0 || this.StaticAssetsCount > 0
-                ////    ? $"{MainUserPagePath}#{this.SessionId}"
-                ////    : MainUserPagePath;
-
-                ////// TODO: Add error page in iframe
-                ////this.JsRuntime.InvokeVoid("App.reloadIFrame", "user-page-window", userPagePath);
-            }
-
-            return compilationResult;
-        }
-
-        private Task UpdateLoaderTextAsync(string loaderText)
-        {
-            this.LoaderText = loaderText;
-
-            //this.StateHasChanged();
-            return Task.Delay(1); // Ensure rendering has time to be called
+            return (compilationResult, code);
         }
     }
 }

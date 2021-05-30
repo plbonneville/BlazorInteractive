@@ -6,12 +6,13 @@ using Microsoft.DotNet.Interactive;
 using Microsoft.DotNet.Interactive.Commands;
 using Microsoft.DotNet.Interactive.CSharp;
 using Microsoft.DotNet.Interactive.Events;
+using Microsoft.DotNet.Interactive.FSharp;
 using Microsoft.DotNet.Interactive.Tests.Utility;
 using Xunit;
 
 namespace BlazorInteractive.Tests
 {
-    public class BlazorInteractiveTests : IDisposable
+    public sealed class BlazorInteractiveTests : IDisposable
     {
         private readonly Kernel _kernel;
 
@@ -19,11 +20,16 @@ namespace BlazorInteractive.Tests
         {
             _kernel = new CompositeKernel
             {
-                new CSharpKernel()
+                new CSharpKernel().UseNugetDirective(),
+                new FSharpKernel()
             };
 
-            Task.Run(() => new BlazorKernelExtension().OnLoadAsync(_kernel))
-                .Wait();
+            Task.Run(async () =>
+            {
+                var extension = new BlazorKernelExtension();
+                await extension.OnLoadAsync(_kernel);
+            })
+            .Wait();
 
             KernelEvents = _kernel.KernelEvents.ToSubscribedList();
         }
@@ -40,10 +46,13 @@ namespace BlazorInteractive.Tests
         [Fact]
         public async Task It_is_registered_as_a_directive()
         {
+            // Arrange
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
+            // Act
             await _kernel.SubmitCodeAsync("#!blazor");
 
+            // Assert
             KernelEvents
                 .Should()
                 .ContainSingle<CommandSucceeded>()
@@ -54,13 +63,16 @@ namespace BlazorInteractive.Tests
         }
 
         [Fact]
-        public async Task It_formats_BlazorCode()
+        public async Task It_formats_BlazorCode_as_html()
         {
+            // Arrange
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
+            // Act
             await _kernel.SubmitCodeAsync(@"#!blazor
 <h1>hello world</h1>");
 
+            // Assert
             KernelEvents
                 .Should()
                 .ContainSingle<DisplayEvent>()
@@ -71,8 +83,9 @@ namespace BlazorInteractive.Tests
         }
 
         [Fact]
-        public async Task It_can_interprets_BlazorCode()
+        public async Task It_interprets_BlazorCode()
         {
+            // Arrange
             const string code = @"#!blazor
 <h1>Hello world @name!</h1>
 
@@ -81,8 +94,11 @@ namespace BlazorInteractive.Tests
 }";
 
             using var events = _kernel.KernelEvents.ToSubscribedList();
+
+            // Act
             await _kernel.SubmitCodeAsync(code);
 
+            // Assert
             KernelEvents
                 .Should()
                 .ContainSingle<DisplayEvent>()
@@ -97,8 +113,9 @@ namespace BlazorInteractive.Tests
         }
 
         [Fact]
-        public async Task It_can_interprets_BlazorCode_with_method()
+        public async Task It_interpret_BlazorCode_with_a_method()
         {
+            // Arrange
             const string code = @"#!blazor
 <h1>Counter</h1>
 
@@ -119,8 +136,11 @@ namespace BlazorInteractive.Tests
             ";
 
             using var events = _kernel.KernelEvents.ToSubscribedList();
+
+            // Act
             await _kernel.SubmitCodeAsync(code);
 
+            // Assert
             KernelEvents
                 .Should()
                 .ContainSingle<DisplayEvent>()
@@ -158,6 +178,104 @@ namespace BlazorInteractive.Tests
                 .Value
                 .Should()
                 .Contain("<h1>hello world</h1>");
+        }
+
+        [Fact]
+        public async Task It_can_reference_a_component_defined_in_previous_compilation()
+        {
+            // Arrange
+            await _kernel.SubmitCodeAsync(@"#!blazor
+                <h1>hello world</h1>");
+
+            using var events = _kernel.KernelEvents.ToSubscribedList();
+
+            // Act
+            await _kernel.SubmitCodeAsync(@"typeof(__Main).Name");
+
+            // Assert
+            events
+                .Should()
+                .ContainSingle<DisplayEvent>()
+                .Which
+                .FormattedValues
+                .Should()
+                .ContainSingle(v => v.MimeType == "text/plain")
+                .Which
+                .Value
+                .Should()
+                .Be("__Main");
+        }
+
+        [Fact]
+        public async Task It_can_instantiate_a_component_defined_in_previous_compilation()
+        {
+            // Arrange
+            await _kernel.SubmitCodeAsync(@"#!blazor
+                <h1>hello world</h1>");
+
+            using var events = _kernel.KernelEvents.ToSubscribedList();
+
+            // Act
+            await _kernel.SubmitCodeAsync(@"var component = new __Main();");
+
+            // Assert
+            events
+                .Should()
+                .ContainSingle<CommandSucceeded>()
+                .Which
+                .Command.As<SubmitCode>()
+                .Code
+                .Should()
+                .Be("var component = new __Main();");
+        }
+
+        [Fact]
+        public async Task It_can_reference_a_named_component_defined_in_previous_compilation()
+        {
+            // Arrange
+            await _kernel.SubmitCodeAsync(@"#!blazor --name HelloWorld
+                <h1>hello world</h1>");
+
+            using var events = _kernel.KernelEvents.ToSubscribedList();
+
+            // Act
+            await _kernel.SubmitCodeAsync(@"typeof(HelloWorld).Name");
+
+            // Assert
+            events
+                .Should()
+                .ContainSingle<DisplayEvent>()
+                .Which
+                .FormattedValues
+                .Should()
+                .ContainSingle(v => v.MimeType == "text/plain")
+                .Which
+                .Value
+                .Should()
+                .Be("HelloWorld");
+        }
+
+        [Fact]
+        public async Task It_can_instantiate_a_named_component_defined_in_previous_compilation()
+        {
+            // Arrange
+            await _kernel.SubmitCodeAsync(@"#!blazor -n HelloWorld
+                <h1>hello world</h1>");
+
+            using var events = _kernel.KernelEvents.ToSubscribedList();
+
+            // Act
+            await _kernel.SubmitCodeAsync(@"var component = new HelloWorld();");
+
+            // Assert
+            events
+                .Should()
+                .ContainSingle<CommandSucceeded>()
+                .Which
+                .Command.As<SubmitCode>()
+                .Code
+                .Should()
+                .Be("var component = new HelloWorld();");
         }
     }
 }
