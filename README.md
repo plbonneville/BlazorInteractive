@@ -40,6 +40,42 @@ Using the `#!blazor` magic command your code cell will be parsed by a Blazor eng
 
 ![hello world](img/example1.jpg)
 
+### Naming your components
+
+You can name the generated Razor components using the `-n` or `--name` options.
+
+```razor
+#!blazor --name Counter
+<h1>Counter</h1>
+
+<p>
+    Current count: @currentCount
+</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+  public int currentCount = 0;
+
+  void IncrementCount()
+  {
+    currentCount++;
+  }
+}
+```
+
+You can then use the component as any other class in the next code cells:
+
+```csharp
+var componentName = typeof(Counter).Name;
+componentName
+```
+
+```csharp
+var counter = new Counter();
+counter.currentCount
+```
+
 ## 🌱 How to compile this project
 
 Since this project requires a git submodule, you'll need to initialize and update the [Blazor REPL](https://github.com/BlazorRepl/BlazorRepl) submodule.
