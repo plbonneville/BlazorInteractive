@@ -54,7 +54,7 @@ namespace BlazorInteractive
 
         private static async Task AddComponentTypeToInteractiveWorkspace(Kernel kernel, string code)
         {
-            // TODO: Replace with regex?
+            // TODO: Replace with regex? or with Roslyn?
             // START
             // (?<namespace_start>namespace BlazorRepl.UserComponents\r?\n\{\r?\n)
             // END

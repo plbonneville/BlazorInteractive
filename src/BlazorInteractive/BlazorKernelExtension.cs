@@ -19,7 +19,9 @@ namespace BlazorInteractive
                 compositeKernel.Add(new BlazorKernel());
             }
 
-            kernel.UseBlazor();
+            kernel
+                .UseBlazor()
+                .LoadRequiredAssemblies();
 
             var message = new HtmlString(@"
 <details>
@@ -50,11 +52,9 @@ namespace BlazorInteractive
 
             var formattedValue = new FormattedValue(
                 HtmlFormatter.MimeType,
-                message.ToDisplayString(HtmlFormatter.MimeType));
-
-            await kernel.SubmitCodeAsync(@"#r ""nuget: Microsoft.AspNetCore.Components.WebAssembly, 5.0.6""");
+                message.ToDisplayString(HtmlFormatter.MimeType));            
 
             await kernel.SendAsync(new DisplayValue(formattedValue, Guid.NewGuid().ToString()));
-        }        
+        }       
     }
 }

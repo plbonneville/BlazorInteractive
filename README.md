@@ -22,7 +22,7 @@ To get started with Blazor in .NET Interactive Notebooks, first install the `Bla
 In a new `C# (.NET Interactive)` cell enter and run the following:
 
 ```
-#r "nuget: BlazorInteractive, 1.0.9-alpha.1"
+#r "nuget: BlazorInteractive, 1.0.10-alpha.1"
 ```
 
 ## ⚡️ Usage
