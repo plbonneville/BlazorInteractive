@@ -72,7 +72,7 @@ namespace BlazorInteractive
             // Get all required assemblies
             var baseAssemblies = CompilationService
                 .BaseAssemblyPackageVersionMappings
-                .Select(package => Assembly.Load($"{package.Key}, Version={package.Value}"));
+                .Select(package => Assembly.Load(package.Key));
             
             var referenceAssemblies = AppDomain.CurrentDomain.GetAssemblies()
                     .Union(baseAssemblies)

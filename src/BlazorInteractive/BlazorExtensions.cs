@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Html;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.DotNet.Interactive;
+using Microsoft.DotNet.Interactive.Commands;
+using Microsoft.DotNet.Interactive.CSharp;
 using Microsoft.DotNet.Interactive.Formatting;
 
 namespace BlazorInteractive
@@ -54,20 +59,12 @@ namespace BlazorInteractive
 
         private static async Task AddComponentTypeToInteractiveWorkspace(Kernel kernel, string code)
         {
-            // TODO: Replace with regex? or with Roslyn?
-            // START
-            // (?<namespace_start>namespace BlazorRepl.UserComponents\r?\n\{\r?\n)
-            // END
-            // (?<namespace_end>^\})
-            var c = code
-                .Split('\n')
-                .Where(x => !x.StartsWith("namespace BlazorRepl.UserComponents"))
-                .Where(x => !x.StartsWith("{"))
-                .Where(x => !x.StartsWith("}"))
-                .Aggregate(new StringBuilder(), (sb, x) => sb.Append(x))
-                .ToString();
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
+            CompilationUnitSyntax root = tree.GetCompilationUnitRoot();
+            var codeWithoutNamespace = root.RemoveNamespace();
 
-            await kernel.SubmitCodeAsync(c);
+            var csharpKernel = kernel.FindKernel("csharp") as CSharpKernel;
+            await csharpKernel.SubmitCodeAsync(codeWithoutNamespace);
         }
 
         private static IHtmlContent GenerateHtml(byte[] assemblyBytes, string componentName)
