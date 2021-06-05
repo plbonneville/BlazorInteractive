@@ -6,9 +6,9 @@ Compile and render Razor components (.razor) in .NET Interactive Notebooks.
 
 ## Table of content
 
-- [Get started](#-get-started)
-- [Usage](#-usage)
-- [How to compile this project](#-how-to-compile-this-project)
+- [Get started](#get-started)
+- [Usage](#usage)
+- [How to compile this project](#how-to-compile-this-project)
 
 ## Get started
 
