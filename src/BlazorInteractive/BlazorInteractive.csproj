@@ -5,7 +5,7 @@
     <IncludeBuildOutput>true</IncludeBuildOutput>
     <IsPackable>true</IsPackable>
     <PackageDescription>Renders Blazor markup in dotnet-interactive notebooks.</PackageDescription>
-    <Version>1.0.11</Version>
+    <Version>1.0.12-alpha.1</Version>
     <NoWarn>$(NoWarn);NU5100,NU5104,IDE0003</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <PackageReference Include="bunit" Version="1.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="5.0.6" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.9.0" />
@@ -49,6 +50,8 @@
     <PackageReference Include="Microsoft.DotNet.Interactive" Version="1.0.0-beta.21255.3" />
     <PackageReference Include="Microsoft.DotNet.Interactive.CSharp" Version="1.0.0-beta.21255.3" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.1" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
   </ItemGroup>
 

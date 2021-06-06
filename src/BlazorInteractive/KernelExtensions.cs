@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Http.Json;
 
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.DotNet.Interactive;
 using Microsoft.DotNet.Interactive.Commands;
@@ -18,7 +19,8 @@ namespace BlazorInteractive
         {
             var referenceAssemblyLocations = new string[]
                 {
-                    typeof(WebAssemblyHost).Assembly.Location, // Microsoft.AspNetCore.Components
+                    typeof(ComponentBase).Assembly.Location,   // Microsoft.AspNetCore.Components
+                    typeof(WebAssemblyHost).Assembly.Location, // Microsoft.AspNetCore.Components.WebAssembly                    
                     typeof(DataType).Assembly.Location,        // System.ComponentModel.DataAnnotations
                     typeof(JsonContent).Assembly.Location      // System.Net.Http.Json
                 }
