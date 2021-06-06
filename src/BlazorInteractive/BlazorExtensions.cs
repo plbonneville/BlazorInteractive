@@ -31,7 +31,7 @@ namespace BlazorInteractive
 
                     html = GenerateHtml(assemblyBytes, markdown.ComponentName);
 
-                    await AddComponentTypeToInteractiveWorkspace(kernel, code);
+                    AddComponentTypeToInteractiveWorkspace(kernel, code);
                 })
                 .Wait();
 
@@ -57,14 +57,15 @@ namespace BlazorInteractive
             return (compileToAssemblyResult.AssemblyBytes, code);
         }
 
-        private static async Task AddComponentTypeToInteractiveWorkspace(Kernel kernel, string code)
+        private static void AddComponentTypeToInteractiveWorkspace(Kernel kernel, string code)
         {
             SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
             CompilationUnitSyntax root = tree.GetCompilationUnitRoot();
             var codeWithoutNamespace = root.RemoveNamespace();
 
             var csharpKernel = kernel.FindKernel("csharp") as CSharpKernel;
-            await csharpKernel.SubmitCodeAsync(codeWithoutNamespace);
+
+            csharpKernel.DeferCommand(new SubmitCode(codeWithoutNamespace));
         }
 
         private static IHtmlContent GenerateHtml(byte[] assemblyBytes, string componentName)
