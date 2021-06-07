@@ -27,19 +27,16 @@ namespace BlazorInteractive
 
                 try
                 {
-                    IHtmlContent html = new HtmlString("");
-
                     Task.Run(async () =>
                     {
                         var (assemblyBytes, code) = await GenerateAssemblyAndCodeFile(markdown);
 
-                        html = GenerateHtml(assemblyBytes, markdown.ComponentName);
+                        var html = GenerateHtml(assemblyBytes, markdown.ComponentName);
+                        html.WriteTo(writer, HtmlEncoder.Default);
 
                         AddComponentTypeToInteractiveWorkspace(kernel, code);
                     })
                     .Wait();
-
-                    html.WriteTo(writer, HtmlEncoder.Default);
                 }
                 finally
                 {
