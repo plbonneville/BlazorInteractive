@@ -19,9 +19,8 @@ namespace BlazorInteractive
                 compositeKernel.Add(new BlazorKernel());
             }
 
-            kernel
-                .UseBlazor()
-                .LoadRequiredAssemblies();
+            kernel.UseBlazor();
+            await kernel.LoadRequiredAssemblies();
 
             var message = new HtmlString(@"
 <details>

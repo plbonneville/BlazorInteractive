@@ -1,7 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http.Json;
-
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.DotNet.Interactive;
@@ -12,24 +15,23 @@ namespace BlazorInteractive
 {
     internal static class KernelExtensions
     {
-        internal static void LoadRequiredAssemblies(this Kernel kernel)
+        private static readonly Assembly[] _references =
+        {
+            typeof(ComponentBase).Assembly,   // Microsoft.AspNetCore.Components
+            typeof(WebAssemblyHost).Assembly, // Microsoft.AspNetCore.Components.WebAssembly                    
+            typeof(DataType).Assembly,        // System.ComponentModel.DataAnnotations
+            typeof(JsonContent).Assembly      // System.Net.Http.Json
+        };
+
+        internal static Task LoadRequiredAssemblies(this Kernel kernel)
             => LoadRequiredAssemblies(kernel.FindKernel("csharp") as CSharpKernel);
 
-        private static void LoadRequiredAssemblies(this CSharpKernel csharpKernel)
+        private static async Task LoadRequiredAssemblies(this CSharpKernel csharpKernel)
         {
-            var referenceAssemblyLocations = new string[]
-                {
-                    typeof(ComponentBase).Assembly.Location,   // Microsoft.AspNetCore.Components
-                    typeof(WebAssemblyHost).Assembly.Location, // Microsoft.AspNetCore.Components.WebAssembly                    
-                    typeof(DataType).Assembly.Location,        // System.ComponentModel.DataAnnotations
-                    typeof(JsonContent).Assembly.Location      // System.Net.Http.Json
-                }
-                .Select(x => x.Replace("\\", "/"));
+            var rDirectives = string.Join(Environment.NewLine, _references.Select(a => $"#r \"{a.Location}\""));
 
-            foreach (var location in referenceAssemblyLocations)
-            {
-                csharpKernel.DeferCommand(new SubmitCode($@"#r ""{location}"""));
-            }            
+            await csharpKernel.SendAsync(new SubmitCode($"{rDirectives}"), CancellationToken.None).ConfigureAwait(false);
+            //await csharpKernel.SendAsync(new SubmitCode($"{rDirectives}{Environment.NewLine}{usings}"), CancellationToken.None).ConfigureAwait(false);           
         }
     }
 }
