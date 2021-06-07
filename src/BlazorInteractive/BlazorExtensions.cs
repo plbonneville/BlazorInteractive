@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using System.Text.Encodings.Web;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Html;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.DotNet.Interactive;
 using Microsoft.DotNet.Interactive.Commands;
 using Microsoft.DotNet.Interactive.CSharp;
@@ -23,19 +21,30 @@ namespace BlazorInteractive
         {
             Formatter.Register<BlazorMarkdown>((markdown, writer) =>
             {
-                IHtmlContent html = new HtmlString("");
+                // Formatter.Register() doesn't support async formatters yet.
+                // Prevent SynchronizationContext-induced deadlocks given the following sync-over-async code.
+                ExecutionContext.SuppressFlow();
 
-                Task.Run(async () =>
+                try
                 {
-                    var (assemblyBytes, code) = await GenerateAssemblyAndCodeFile(markdown);
+                    IHtmlContent html = new HtmlString("");
 
-                    html = GenerateHtml(assemblyBytes, markdown.ComponentName);
+                    Task.Run(async () =>
+                    {
+                        var (assemblyBytes, code) = await GenerateAssemblyAndCodeFile(markdown);
 
-                    AddComponentTypeToInteractiveWorkspace(kernel, code);
-                })
-                .Wait();
+                        html = GenerateHtml(assemblyBytes, markdown.ComponentName);
 
-                html.WriteTo(writer, HtmlEncoder.Default);
+                        AddComponentTypeToInteractiveWorkspace(kernel, code);
+                    })
+                    .Wait();
+
+                    html.WriteTo(writer, HtmlEncoder.Default);
+                }
+                finally
+                {
+                    ExecutionContext.RestoreFlow();
+                }
 
             }, HtmlFormatter.MimeType);
 
@@ -59,8 +68,8 @@ namespace BlazorInteractive
 
         private static void AddComponentTypeToInteractiveWorkspace(Kernel kernel, string code)
         {
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
-            CompilationUnitSyntax root = tree.GetCompilationUnitRoot();
+            var tree = CSharpSyntaxTree.ParseText(code);
+            var root = tree.GetCompilationUnitRoot();
             var codeWithoutNamespace = root.RemoveNamespace();
 
             var csharpKernel = kernel.FindKernel("csharp") as CSharpKernel;
@@ -84,7 +93,7 @@ namespace BlazorInteractive
 
             var id = "blazorExtension" + Guid.NewGuid().ToString("N");
 
-            var html = Html.ToHtmlContent($"<div id=\"{id}\">{markup}</div>");
+            var html = $"<div id=\"{id}\">{markup}</div>".ToHtmlContent();
 
             return html;
         }
