@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using FluentAssertions;
@@ -19,20 +20,30 @@ namespace BlazorInteractive.Tests
 
         public BlazorInteractiveTests()
         {
-            _kernel = new CompositeKernel
-            {
-                new CSharpKernel().UseNugetDirective(),
-                new FSharpKernel().UseNugetDirective()
-            };
+            // Prevent SynchronizationContext-induced deadlocks given the following sync-over-async code.
+            ExecutionContext.SuppressFlow();
 
-            Task.Run(async () =>
+            try
             {
-                var extension = new BlazorKernelExtension();
-                await extension.OnLoadAsync(_kernel);
-            })
-            .Wait();
+                _kernel = new CompositeKernel
+                {
+                    new CSharpKernel().UseNugetDirective(),
+                    new FSharpKernel().UseNugetDirective()
+                };
 
-            KernelEvents = _kernel.KernelEvents.ToSubscribedList();
+                Task.Run(async () =>
+                {
+                    var extension = new BlazorKernelExtension();
+                    await extension.OnLoadAsync(_kernel);
+                })
+                .Wait();
+
+                KernelEvents = _kernel.KernelEvents.ToSubscribedList();
+            }
+            finally
+            {
+                ExecutionContext.RestoreFlow();
+            }
         }
 
         private SubscribedList<KernelEvent> KernelEvents { get; }
@@ -166,6 +177,8 @@ namespace BlazorInteractive.Tests
             // Act
             await _kernel.SubmitCodeAsync(@"#!blazor
             <h1>hello world</h1>");
+
+            await Task.Delay(1000);
 
             // Assert
             KernelEvents
