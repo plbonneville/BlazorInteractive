@@ -91,4 +91,5 @@ git submodule update
 ## Built With
 
 - [Blazor REPL](https://github.com/BlazorRepl/BlazorRepl)
+- [bUnit](https://github.com/bUnit-dev/bUnit)
 - [.NET Interactive ](https://github.com/dotnet/interactive)
