@@ -1,6 +1,7 @@
 # .NET Interactive Notebooks Blazor Extension
 
 [![NuGet version (BlazorInteractive)](https://img.shields.io/nuget/v/BlazorInteractive.svg)](https://www.nuget.org/packages/BlazorInteractive/)
+[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/plbonneville/BlazorInteractive/blob/main/LICENSE)
 
 Compile and render Razor components (.razor) in .NET Interactive Notebooks.
 
@@ -20,7 +21,7 @@ In a new `C# (.NET Interactive)` cell enter and run the following:
 #r "nuget: BlazorInteractive, 1.0.12-alpha.3"
 ```
 
-## Usage
+## Usage/Examples
 
 Using the `#!blazor` magic command your code cell will be parsed by a Blazor engine and the results displayed using the `"txt/html"` mime type.
 
@@ -71,24 +72,34 @@ var counter = new Counter();
 counter.currentCount
 ```
 
-## How to compile this project
+## Sequence of commands and events
+
+Here is an overview of the sequence of commands and events:
+
+![sequence of commands and events](https://github.com/plbonneville/BlazorInteractive/blob/main/img/blazor-kernel.svg)
+
+## Contributing
+
+Contributions are always welcome!
+
+### How to compile this project
 
 Since this project requires a git submodule, you'll need to initialize and update the [Blazor REPL](https://github.com/BlazorRepl/BlazorRepl) submodule.
 
-### On the first `git clone`:
+#### On the first `git clone`:
 
 ```
 git clone --recurse-submodules -j8 https://github.com/plbonneville/BlazorInteractive.git
 ```
 
-### If you already have the repository cloned, run:
+#### If you already have the repository cloned, run:
 
 ```
 git submodule init
 git submodule update
 ```
 
-## Built With
+## Built with
 
 - [Blazor REPL](https://github.com/BlazorRepl/BlazorRepl)
 - [bUnit](https://github.com/bUnit-dev/bUnit)
