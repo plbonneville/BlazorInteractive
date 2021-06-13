@@ -8,7 +8,7 @@ Compile and render Razor components (.razor) in .NET Interactive Notebooks.
 ## Table of content
 
 - [Get started](#get-started)
-- [Usage](#usage)
+- [Usage](#usageexamples)
 - [How to compile this project](#how-to-compile-this-project)
 
 ## Get started
@@ -18,7 +18,7 @@ To get started with Blazor in .NET Interactive Notebooks, first install the `Bla
 In a new `C# (.NET Interactive)` cell enter and run the following:
 
 ```
-#r "nuget: BlazorInteractive, 1.0.12-alpha.3"
+#r "nuget: BlazorInteractive, 1.0.12"
 ```
 
 ## Usage/Examples
