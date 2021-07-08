@@ -1,0 +1,54 @@
+#!pwsh
+
+# 0. Clean-up the bin and obj folders
+get-childitem .. -Filter "bin" -recurse | foreach ($_) {remove-item $_.fullname -Force -recurse}
+get-childitem .. -Filter "obj" -recurse | foreach ($_) {remove-item $_.fullname -Force -recurse}
+
+# 1. Build the project
+dotnet build ../src/BlazorInteractive/BlazorInteractive.csproj
+
+# Pack up the NuGet package. Note, you should increment the version because the previous one, once installed, will be in your NuGet cache
+$version = [System.DateTime]::Now.ToString("yyyy.MM.dd.HHmmss")
+dotnet pack /p:PackageVersion=$version ../src/BlazorInteractive/BlazorInteractive.csproj
+
+# 3. Check that the package is there
+Get-ChildItem .. -Recurse *.nupkg
+
+#!csharp
+
+#i nuget:/workspaces/blazor-interactive/src/BlazorInteractive/bin/Debug
+#r "nuget:BlazorInteractive"
+
+#!csharp
+
+#!blazor
+<h1>Hello @name</h1>
+
+@code {
+    string name = "Alice";
+}
+
+#!csharp
+
+#!blazor --name Counter
+<h1>Counter</h1>
+
+<p>
+    Current count: @currentCount
+</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+  public int currentCount = 0;
+
+  void IncrementCount()
+  {
+    currentCount++;
+  }
+}
+
+#!csharp
+
+var componentName = typeof(Counter).Name;
+componentName
