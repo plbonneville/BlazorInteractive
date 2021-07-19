@@ -5,7 +5,7 @@
     <IncludeBuildOutput>true</IncludeBuildOutput>
     <IsPackable>true</IsPackable>
     <PackageDescription>Renders Blazor markup in dotnet-interactive notebooks.</PackageDescription>
-    <Version>1.0.15</Version>
+    <Version>1.0.16</Version>
     <NoWarn>$(NoWarn);NU5100,NU5104,IDE0003</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
@@ -41,8 +41,8 @@
 
   <ItemGroup>
     <PackageReference Include="bunit" Version="1.1.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="5.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="5.0.8" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.10.0" />
@@ -50,7 +50,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.10.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="5.0.7" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="5.0.8" />
     <PackageReference Include="Microsoft.DotNet.Interactive.CSharp" Version="1.0.0-beta.21309.3" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.1" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
