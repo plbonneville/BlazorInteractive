@@ -16,7 +16,7 @@ Get-ChildItem .. -Recurse *.nupkg
 
 #!csharp
 
-#i nuget:/workspaces/blazor-interactive/src/BlazorInteractive/bin/Debug
+#i nuget:/workspaces/BlazorInteractive/src/BlazorInteractive/bin/Debug
 #r "nuget:BlazorInteractive"
 
 #!csharp
