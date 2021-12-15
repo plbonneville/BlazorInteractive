@@ -53,7 +53,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="5.0.10" />
     <PackageReference Include="Microsoft.DotNet.Interactive.CSharp" Version="1.0.0-beta.21404.3" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.1" />
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="System.Text.Json" Version="6.0.1" />
   </ItemGroup>
 
 </Project>
