@@ -44,7 +44,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="5.0.11" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.11.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.11.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.1.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.11.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="3.11.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.11.0" />
