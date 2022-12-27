@@ -1,16 +1,9 @@
-﻿namespace BlazorInteractive
+﻿namespace BlazorInteractive;
+
+/// <summary>
+/// Type used to register a markdown formatter for Blazor.
+/// </summary>
+internal sealed record BlazorMarkdown(string Value, string ComponentName)
 {
-    public class BlazorMarkdown
-    {
-        public BlazorMarkdown(string value, string componentName)
-        {
-            Value = value;
-            ComponentName = componentName;
-        }
-
-        public string Value { get; }
-        public string ComponentName { get; }
-
-        public override string ToString() => Value;
-    }
+    public override string ToString() => Value;
 }

@@ -1,59 +1,61 @@
-﻿using System;
-using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Html;
+﻿using Microsoft.AspNetCore.Html;
 using Microsoft.DotNet.Interactive;
 using Microsoft.DotNet.Interactive.Commands;
 using Microsoft.DotNet.Interactive.Formatting;
 
-namespace BlazorInteractive
+namespace BlazorInteractive;
+
+public sealed class BlazorKernelExtension : IKernelExtension, IStaticContentSource
 {
-    public class BlazorKernelExtension : IKernelExtension, IStaticContentSource
+    public string Name => "Blazor";
+
+    public async Task OnLoadAsync(Kernel kernel)
     {
-        public string Name => "Blazor";
-
-        public async Task OnLoadAsync(Kernel kernel)
+        if (kernel is not CompositeKernel compositeKernel)
         {
-            if (kernel is CompositeKernel compositeKernel)
-            {
-                compositeKernel.Add(new BlazorKernel());
-            }
+            throw new InvalidOperationException("The Blazor kernel can only be added into a CompositeKernel.");
+        }
 
-            kernel.UseBlazor();
-            await kernel.LoadRequiredAssemblies();
+        // Add a BlazorKernel as a child kernel to the CompositeKernel
+        compositeKernel.Add(new BlazorKernel());
 
-            var message = new HtmlString(@"
-<details>
-    <summary>Compile and render Razor components (.razor) in .NET Interactive Notebooks.</summary>
-    <p>This extension adds a new kernel that can render Blazor markdown.</p>
+        await compositeKernel
+            .UseBlazor()
+            .LoadRequiredAssemblies();
 
-    <pre>
-        <code>
-#!blazor
-<h1>Counter</h1>
+        var message = new HtmlString(
+            """
+            <details>
+                <summary>Compile and render Razor components (.razor) in .NET Interactive Notebooks.</summary>
+                <p>This extension adds a new kernel that can render Blazor markdown.</p>
 
-<p>
-    Current count: @currentCount
-</p>
+                <pre>
+                    <code>
+            #!blazor
+            <h1>Counter</h1>
 
-@code {
-  int currentCount = 0;
-      }</code>
-    </pre>
+            <p>
+                Current count: @currentCount
+            </p>
 
-    <p>This extension also adds the compiled component as a type to the interactive workspace.</p>
+            @code {
+              int currentCount = 0;
+            }</code>
+                </pre>
 
-    <p>Options:</p>
-    <ul>
-    <li>-n, --name &nbsp;&nbsp;&nbsp;&nbsp;The Razor component's (.razor) type name. The default value is <code>__Main</code></li>
-    </ul>
-</details>");
+                <p>This extension also adds the compiled component as a type to the interactive workspace.</p>
 
-            var formattedValue = new FormattedValue(
-                HtmlFormatter.MimeType,
-                message.ToDisplayString(HtmlFormatter.MimeType));            
+                <p>Options:</p>
+                <ul>
+                <li>-n, --name &nbsp;&nbsp;&nbsp;&nbsp;The Razor component's (.razor) type name. The default value is <code>__Main</code></li>
+                </ul>
+            </details>
+            """);
 
-            await kernel.SendAsync(new DisplayValue(formattedValue, Guid.NewGuid().ToString()));
-        }       
+        var formattedValue = new FormattedValue(
+            HtmlFormatter.MimeType,
+            message.ToDisplayString(HtmlFormatter.MimeType));
+
+        await compositeKernel.SendAsync(new DisplayValue(formattedValue, Guid.NewGuid().ToString()));
     }
 }
