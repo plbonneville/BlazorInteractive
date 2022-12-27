@@ -11,13 +11,17 @@ public class BlazorKernelExtension : IKernelExtension, IStaticContentSource
 
     public async Task OnLoadAsync(Kernel kernel)
     {
-        if (kernel is CompositeKernel compositeKernel)
+        if (kernel is not CompositeKernel compositeKernel)
         {
-            compositeKernel.Add(new BlazorKernel());
+            throw new InvalidOperationException("The Blazor kernel can only be added into a CompositeKernel.");
         }
 
-        kernel.UseBlazor();
-        await kernel.LoadRequiredAssemblies();
+        // Add a BlazorKernel as a child kernel to the CompositeKernel
+        compositeKernel.Add(new BlazorKernel());
+
+        await compositeKernel
+            .UseBlazor()
+            .LoadRequiredAssemblies();
 
         var message = new HtmlString(
             """
@@ -50,8 +54,8 @@ public class BlazorKernelExtension : IKernelExtension, IStaticContentSource
 
         var formattedValue = new FormattedValue(
             HtmlFormatter.MimeType,
-            message.ToDisplayString(HtmlFormatter.MimeType));            
+            message.ToDisplayString(HtmlFormatter.MimeType));
 
-        await kernel.SendAsync(new DisplayValue(formattedValue, Guid.NewGuid().ToString()));
-    }       
+        await compositeKernel.SendAsync(new DisplayValue(formattedValue, Guid.NewGuid().ToString()));
+    }
 }
