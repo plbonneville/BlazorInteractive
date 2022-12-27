@@ -11,7 +11,7 @@ using Microsoft.DotNet.Interactive.Formatting;
 
 namespace BlazorInteractive;
 
-public static class BlazorExtensions
+internal static class BlazorExtensions
 {
     /// <summary>
     /// Registers the type <see cref="BlazorMarkdown"/> as a formatter.

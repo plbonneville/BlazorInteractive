@@ -11,7 +11,7 @@ namespace BlazorInteractive;
 /// <summary>
 /// A <see cref="Kernel"/> that renders Blazor markup.
 /// </summary>
-public class BlazorKernel : Kernel, IKernelCommandHandler<SubmitCode>
+internal sealed class BlazorKernel : Kernel, IKernelCommandHandler<SubmitCode>
 {
     private const string DefaultComponentName = "__Main";
 

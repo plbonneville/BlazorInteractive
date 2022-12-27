@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace BlazorInteractive;
 
-public static class SyntaxNodeExtensions
+internal static class SyntaxNodeExtensions
 {
     public static string RemoveNamespace(this SyntaxNode root) =>
         root

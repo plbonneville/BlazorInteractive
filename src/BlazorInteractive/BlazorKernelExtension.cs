@@ -5,7 +5,7 @@ using Microsoft.DotNet.Interactive.Formatting;
 
 namespace BlazorInteractive;
 
-public class BlazorKernelExtension : IKernelExtension, IStaticContentSource
+public sealed class BlazorKernelExtension : IKernelExtension, IStaticContentSource
 {
     public string Name => "Blazor";
 
