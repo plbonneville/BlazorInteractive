@@ -77,9 +77,6 @@ public class BlazorKernel : Kernel, IKernelCommandHandler<SubmitCode>
     {
         private static readonly ModelBinder<BlazorDirectiveOptions> ModelBinder = new();
 
-        //public static BlazorDirectiveOptions Create(ParseResult parseResult) =>
-        //    ModelBinder.CreateInstance(new BindingContext(parseResult)) as BlazorDirectiveOptions;
-
         public static BlazorDirectiveOptions Create(ParseResult parseResult)
         {
             var invocationContext = new InvocationContext(parseResult);
