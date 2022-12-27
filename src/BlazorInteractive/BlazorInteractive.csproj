@@ -5,7 +5,7 @@
     <IncludeBuildOutput>true</IncludeBuildOutput>
     <IsPackable>true</IsPackable>
     <PackageDescription>Renders Blazor markup in dotnet-interactive notebooks.</PackageDescription>
-    <Version>1.0.19</Version>
+    <Version>1.1.0</Version>
     <NoWarn>$(NoWarn);NU5100,NU5104,IDE0003</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
