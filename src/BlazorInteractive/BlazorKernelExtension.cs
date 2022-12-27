@@ -6,23 +6,23 @@ using Microsoft.DotNet.Interactive;
 using Microsoft.DotNet.Interactive.Commands;
 using Microsoft.DotNet.Interactive.Formatting;
 
-namespace BlazorInteractive
+namespace BlazorInteractive;
+
+public class BlazorKernelExtension : IKernelExtension, IStaticContentSource
 {
-    public class BlazorKernelExtension : IKernelExtension, IStaticContentSource
+    public string Name => "Blazor";
+
+    public async Task OnLoadAsync(Kernel kernel)
     {
-        public string Name => "Blazor";
-
-        public async Task OnLoadAsync(Kernel kernel)
+        if (kernel is CompositeKernel compositeKernel)
         {
-            if (kernel is CompositeKernel compositeKernel)
-            {
-                compositeKernel.Add(new BlazorKernel());
-            }
+            compositeKernel.Add(new BlazorKernel());
+        }
 
-            kernel.UseBlazor();
-            await kernel.LoadRequiredAssemblies();
+        kernel.UseBlazor();
+        await kernel.LoadRequiredAssemblies();
 
-            var message = new HtmlString(@"
+        var message = new HtmlString(@"
 <details>
     <summary>Compile and render Razor components (.razor) in .NET Interactive Notebooks.</summary>
     <p>This extension adds a new kernel that can render Blazor markdown.</p>
@@ -49,11 +49,10 @@ namespace BlazorInteractive
     </ul>
 </details>");
 
-            var formattedValue = new FormattedValue(
-                HtmlFormatter.MimeType,
-                message.ToDisplayString(HtmlFormatter.MimeType));            
+        var formattedValue = new FormattedValue(
+            HtmlFormatter.MimeType,
+            message.ToDisplayString(HtmlFormatter.MimeType));            
 
-            await kernel.SendAsync(new DisplayValue(formattedValue, Guid.NewGuid().ToString()));
-        }       
-    }
+        await kernel.SendAsync(new DisplayValue(formattedValue, Guid.NewGuid().ToString()));
+    }       
 }
