@@ -3,7 +3,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-
 namespace BlazorInteractive;
 
 public static class SyntaxNodeExtensions
