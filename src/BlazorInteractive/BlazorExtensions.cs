@@ -90,7 +90,9 @@ public static class BlazorExtensions
 
         var id = "blazorExtension" + Guid.NewGuid().ToString("N");
 
-        var html = $"<div id=\"{id}\">{markup}</div>".ToHtmlContent();
+        var html = $"""
+                   <div id="{id}">{markup}</div>
+                   """.ToHtmlContent();
 
         return html;
     }
