@@ -8,10 +8,17 @@ using Microsoft.DotNet.Interactive.Commands;
 
 namespace BlazorInteractive;
 
+/// <summary>
+/// A <see cref="Kernel"/> that renders Blazor markup.
+/// </summary>
 public class BlazorKernel : Kernel, IKernelCommandHandler<SubmitCode>
 {
     private const string DefaultComponentName = "__Main";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BlazorKernel"/> class.
+    /// </summary>
+    /// <returns>A new <see cref="BlazorKernel"/> instance.</returns>
     public BlazorKernel() : base("blazor")
     {
     }
@@ -43,7 +50,6 @@ public class BlazorKernel : Kernel, IKernelCommandHandler<SubmitCode>
                 };
         }
     }
-        
 
     private class BlazorKernelOptionsDirective : ChooseKernelDirective
     {

@@ -13,6 +13,11 @@ namespace BlazorInteractive;
 
 public static class BlazorExtensions
 {
+    /// <summary>
+    /// Registers the type <see cref="BlazorMarkdown"/> as a formatter.
+    /// </summary>
+    /// <param name="kernel">A <see cref="Kernel"/>.</param>
+    /// <returns>A reference to this instance after the operation has completed.</returns>
     public static T UseBlazor<T>(this T kernel) where T : Kernel
     {
         Formatter.Register<BlazorMarkdown>((markdown, writer) =>
@@ -38,14 +43,13 @@ public static class BlazorExtensions
             {
                 ExecutionContext.RestoreFlow();
             }
-
         }, HtmlFormatter.MimeType);
 
         return kernel;
     }
 
     private static async Task<(byte[] assemblyBytes, string code)> GenerateAssemblyAndCodeFile(BlazorMarkdown markdown)
-    {           
+    {
         var blazorCompilationService = new BlazorCompilationService();
         await blazorCompilationService.InitializeAsync();
 
