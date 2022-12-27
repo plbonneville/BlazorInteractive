@@ -45,8 +45,6 @@ internal class BlazorCompilationService
 
     public async Task InitializeAsync()
     {
-        await Task.Run(() => { });
-
         if (this.baseCompilation != null)
         {
             return;
@@ -91,6 +89,8 @@ internal class BlazorCompilationService
                     new KeyValuePair<string, ReportDiagnostic>("CS1701", ReportDiagnostic.Suppress),
                     new KeyValuePair<string, ReportDiagnostic>("CS1702", ReportDiagnostic.Suppress),
                 }));
+
+        await Task.CompletedTask;
     }
 
     public async Task<(CompileToAssemblyResult, string)> CompileToAssemblyAsync(
