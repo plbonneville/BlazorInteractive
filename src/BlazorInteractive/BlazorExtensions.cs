@@ -69,7 +69,7 @@ namespace BlazorInteractive
             var root = tree.GetCompilationUnitRoot();
             var codeWithoutNamespace = root.RemoveNamespace();
 
-            var csharpKernel = kernel.FindKernel("csharp") as CSharpKernel;
+            var csharpKernel = kernel.FindKernelByName("csharp") as CSharpKernel;
 
             csharpKernel.DeferCommand(new SubmitCode(codeWithoutNamespace));
         }

@@ -24,7 +24,7 @@ namespace BlazorInteractive
         };
 
         internal static Task LoadRequiredAssemblies(this Kernel kernel)
-            => LoadRequiredAssemblies(kernel.FindKernel("csharp") as CSharpKernel);
+            => LoadRequiredAssemblies(kernel.FindKernelByName("csharp") as CSharpKernel);
 
         private static async Task LoadRequiredAssemblies(this CSharpKernel csharpKernel)
         {

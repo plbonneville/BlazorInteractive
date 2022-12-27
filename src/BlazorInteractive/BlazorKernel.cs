@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Binding;
 using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.CommandLine.Parsing;
 using System.Threading.Tasks;
 
@@ -26,21 +27,25 @@ namespace BlazorInteractive
             return Task.CompletedTask;
         }
 
-        protected override ChooseKernelDirective CreateChooseKernelDirective()
+        public override ChooseKernelDirective ChooseKernelDirective
         {
-            var nameOption = new Option<string>(
-                new[] { "-n", "--name" },
-                "The Razor component's (.razor) type name. The default value is '__Main'")
+            get
             {
-                IsRequired = false
-            };
+                var nameOption = new Option<string>(
+                    new[] { "-n", "--name" },
+                    "The Razor component's (.razor) type name. The default value is '__Main'")
+                {
+                    IsRequired = false
+                };
 
-            return new BlazorKernelOptionsDirective(this)
-            {
-                nameOption,
-                //fromFileOption,
-            };
+                return new BlazorKernelOptionsDirective(this)
+                    {
+                        nameOption,
+                        //fromFileOption,
+                    };
+            }
         }
+            
 
         private class BlazorKernelOptionsDirective : ChooseKernelDirective
         {
@@ -74,8 +79,16 @@ namespace BlazorInteractive
         {
             private static readonly ModelBinder<BlazorDirectiveOptions> ModelBinder = new();
 
-            public static BlazorDirectiveOptions Create(ParseResult parseResult) =>
-                ModelBinder.CreateInstance(new BindingContext(parseResult)) as BlazorDirectiveOptions;
+            //public static BlazorDirectiveOptions Create(ParseResult parseResult) =>
+            //    ModelBinder.CreateInstance(new BindingContext(parseResult)) as BlazorDirectiveOptions;
+
+            public static BlazorDirectiveOptions Create(ParseResult parseResult)
+            {
+                var invocationContext = new InvocationContext(parseResult);
+                var bindingContext = invocationContext.BindingContext;
+
+                return ModelBinder.CreateInstance(bindingContext) as BlazorDirectiveOptions;
+            }
 
             public string Name { get; set; }
 

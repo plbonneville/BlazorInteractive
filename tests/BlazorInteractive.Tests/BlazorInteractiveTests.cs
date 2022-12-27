@@ -68,10 +68,8 @@ namespace BlazorInteractive.Tests
             KernelEvents
                 .Should()
                 .ContainSingle<CommandSucceeded>()
-                .Which
-                .Command
-                .Should()
-                .Equals("#!blazor");
+                .Which.Command.Should().BeOfType<SubmitCode>()
+                .Which.Code.Should().Be("#!blazor");
         }
 
         [Fact]
@@ -81,11 +79,14 @@ namespace BlazorInteractive.Tests
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
             // Act
-            await _kernel.SubmitCodeAsync(@"#!blazor
-<h1>hello world</h1>");
+            await _kernel.SubmitCodeAsync(
+                """
+                #!blazor
+                <h1>hello world</h1>
+                """);
 
             // Assert
-            KernelEvents
+            events
                 .Should()
                 .ContainSingle<DisplayEvent>()
                 .Which
@@ -98,12 +99,15 @@ namespace BlazorInteractive.Tests
         public async Task It_interprets_BlazorCode()
         {
             // Arrange
-            const string code = @"#!blazor
-<h1>Hello world @name!</h1>
+            const string code = 
+                """
+                #!blazor
+                <h1>Hello world @name!</h1>
 
-@code {
-    string name = ""Alice"";
-}";
+                @code {
+                    string name = "Alice";
+                }
+                """;
 
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
@@ -111,7 +115,7 @@ namespace BlazorInteractive.Tests
             await _kernel.SubmitCodeAsync(code);
 
             // Assert
-            KernelEvents
+            events
                 .Should()
                 .ContainSingle<DisplayEvent>()
                 .Which
@@ -128,24 +132,26 @@ namespace BlazorInteractive.Tests
         public async Task It_interpret_BlazorCode_with_a_method()
         {
             // Arrange
-            const string code = @"#!blazor
-<h1>Counter</h1>
+            const string code =
+                """
+                #!blazor
+                <h1>Counter</h1>
 
-<p>
-    Current count: @currentCount
-</p>
+                <p>
+                    Current count: @currentCount
+                </p>
 
-<button class=""btn btn-primary"" @onclick=""IncrementCount"">Click me</button>
+                <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
-@code {
-                int currentCount = 0;
+                @code {
+                    int currentCount = 0;
 
-                void IncrementCount()
-                {
-                    currentCount++;
+                    void IncrementCount()
+                    {
+                        currentCount++;
+                    }
                 }
-            }
-            ";
+                """;
 
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
@@ -175,8 +181,11 @@ namespace BlazorInteractive.Tests
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
             // Act
-            await _kernel.SubmitCodeAsync(@"#!blazor
-            <h1>hello world</h1>");
+            await _kernel.SubmitCodeAsync(
+                """
+                #!blazor
+                <h1>hello world</h1>
+                """);
 
             await Task.Delay(1000);
 
@@ -198,13 +207,20 @@ namespace BlazorInteractive.Tests
         public async Task It_can_reference_a_component_defined_in_previous_compilation()
         {
             // Arrange
-            await _kernel.SubmitCodeAsync(@"#!blazor
-                         <h1>hello world</h1>");
+            await _kernel.SubmitCodeAsync(
+                """
+                #!blazor
+                <h1>hello world</h1>
+                """);
 
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
             // Act
-            await _kernel.SubmitCodeAsync(@"typeof(__Main).Name");
+            await _kernel.SubmitCodeAsync(
+                """
+                #!csharp
+                typeof(__Main).Name
+                """);
 
             // Assert
             events
@@ -224,13 +240,20 @@ namespace BlazorInteractive.Tests
         public async Task It_can_instantiate_a_component_defined_in_previous_compilation()
         {
             // Arrange
-            await _kernel.SubmitCodeAsync(@"#!blazor
-                         <h1>hello world</h1>");
+            await _kernel.SubmitCodeAsync(
+                """
+                #!blazor
+                <h1>hello world</h1>
+                """);
 
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
             // Act
-            await _kernel.SubmitCodeAsync(@"var component = new __Main();");
+            await _kernel.SubmitCodeAsync(
+                """
+                #!csharp
+                var component = new __Main();
+                """);
 
             // Assert
             events
@@ -240,20 +263,31 @@ namespace BlazorInteractive.Tests
                 .Command.As<SubmitCode>()
                 .Code
                 .Should()
-                .Be("var component = new __Main();");
+                .Be(
+                    """
+                    #!csharp
+                    var component = new __Main();
+                    """);
         }
 
         [Fact]
         public async Task It_can_reference_a_named_component_defined_in_previous_compilation()
         {
             // Arrange
-            await _kernel.SubmitCodeAsync(@"#!blazor --name HelloWorld
-                         <h1>hello world</h1>");
+            await _kernel.SubmitCodeAsync(
+                """
+                #!blazor --name HelloWorld
+                <h1>hello world</h1>
+                """);
 
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
             // Act
-            await _kernel.SubmitCodeAsync(@"typeof(HelloWorld).Name");
+            await _kernel.SubmitCodeAsync(
+                """
+                #!csharp
+                typeof(HelloWorld).Name
+                """);
 
             // Assert
             events
@@ -273,13 +307,20 @@ namespace BlazorInteractive.Tests
         public async Task It_can_instantiate_a_named_component_defined_in_previous_compilation()
         {
             // Arrange
-            await _kernel.SubmitCodeAsync(@"#!blazor -n HelloWorld
-                         <h1>hello world</h1>");
+            await _kernel.SubmitCodeAsync(
+                """
+                #!blazor -n HelloWorld
+                <h1>hello world</h1>
+                """);
 
             using var events = _kernel.KernelEvents.ToSubscribedList();
 
             // Act
-            await _kernel.SubmitCodeAsync(@"var component = new HelloWorld();");
+            await _kernel.SubmitCodeAsync(
+                """
+                #!csharp
+                var component = new HelloWorld();
+                """);
 
             // Assert
             events
@@ -289,7 +330,11 @@ namespace BlazorInteractive.Tests
                 .Command.As<SubmitCode>()
                 .Code
                 .Should()
-                .Be("var component = new HelloWorld();");
+                .Be(
+                    """
+                    #!csharp
+                    var component = new HelloWorld();
+                    """);
         }
     }
 }
