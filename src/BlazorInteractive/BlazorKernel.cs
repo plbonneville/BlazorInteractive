@@ -1,9 +1,7 @@
 ﻿using System.CommandLine;
-using System.CommandLine.Binding;
 using System.CommandLine.Invocation;
 using System.CommandLine.NamingConventionBinder;
 using System.CommandLine.Parsing;
-using System.Threading.Tasks;
 
 using Microsoft.DotNet.Interactive;
 using Microsoft.DotNet.Interactive.Commands;
