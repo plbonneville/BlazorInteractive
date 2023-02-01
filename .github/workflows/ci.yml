@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+env:
+  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,11 +37,9 @@ jobs:
       - name: Test
         run: dotnet test --nologo --no-restore --verbosity normal ./tests/BlazorInteractive.Tests
 
-      - name: Publish NuGet
-        uses: brandedoutcast/publish-nuget@v2.5.5
-        with:
-          # Filepath of the project to be packaged, relative to root of repository
-          PROJECT_FILE_PATH: ./src/BlazorInteractive/BlazorInteractive.csproj
+      - name: Pack NuGet package
+        run: dotnet pack --configuration Release --no-build ./src/BlazorInteractive
 
-          # API key to authenticate with NuGet server
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+      - name: Publish NuGet package
+        if: startsWith(github.ref, 'refs/heads/main')
+        run: dotnet nuget push ./src/BlazorInteractive/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
