@@ -10,7 +10,7 @@
     <NoWarn>$(NoWarn);NU5100,NU5104,IDE0003</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
-    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSymbols>false</IncludeSymbols>
     <Authors>Pier-Luc Bonneville</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/plbonneville/BlazorInteractive</RepositoryUrl>
