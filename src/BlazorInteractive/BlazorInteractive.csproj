@@ -52,7 +52,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.4.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="6.0.14" />
-    <PackageReference Include="Microsoft.DotNet.Interactive.CSharp" Version="1.0.0-beta.23102.2" />
+    <PackageReference Include="Microsoft.DotNet.Interactive.CSharp" Version="1.0.0-beta.23165.2" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.1" />
     <PackageReference Include="System.Text.Json" Version="7.0.2" />
   </ItemGroup>
