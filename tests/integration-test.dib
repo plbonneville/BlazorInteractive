@@ -1,16 +1,13 @@
 #!meta
 
-{"kernelInfo":{"defaultKernelName":null,"items":[{"name":"csharp","languageName":"C#","aliases":["c#","cs"]},{"name":"fsharp","languageName":"F#","aliases":["f#","fs"]},{"name":"pwsh","languageName":"PowerShell","aliases":["powershell"]},{"name":"javascript","languageName":"JavaScript","aliases":["js"]},{"name":"html","languageName":"HTML"},{"name":"sql","languageName":"SQL"},{"name":"kql","languageName":"KQL"},{"name":"mermaid","languageName":"Mermaid"},{"name":"httpRequest","languageName":"http"},{"name":"value"}]}}
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"blazor"},{"aliases":["c#","cs"],"languageName":"C#","name":"csharp"},{"aliases":["f#","fs"],"languageName":"F#","name":"fsharp"},{"aliases":[],"languageName":"HTML","name":"html"},{"aliases":[],"languageName":"http","name":"httpRequest"},{"aliases":["js"],"languageName":"JavaScript","name":"javascript"},{"aliases":[],"languageName":"KQL","name":"kql"},{"aliases":[],"languageName":"Mermaid","name":"mermaid"},{"aliases":["powershell"],"languageName":"PowerShell","name":"pwsh"},{"aliases":[],"languageName":"SQL","name":"sql"},{"aliases":[],"name":"value"}]}}
 
 #!pwsh
 
 # 0. Clean-up the bin and obj folders
 Get-ChildItem .. -Include bin,obj -Recurse | Remove-Item -Force -Recurse
 
-# 1. Build the project
-dotnet build ../src/BlazorInteractive/BlazorInteractive.csproj
-
-# Pack up the NuGet package. Note, you should increment the version because the previous one, once installed, will be in your NuGet cache
+# 2. Pack up the NuGet package. Note, you should increment the version because the previous one, once installed, will be in your NuGet cache
 $version = [System.DateTime]::Now.ToString("yyyy.MM.dd.HHmmss")
 dotnet pack /p:PackageVersion=$version ../src/BlazorInteractive/BlazorInteractive.csproj
 
@@ -19,12 +16,11 @@ Get-ChildItem .. -Recurse *.nupkg
 
 #!csharp
 
-#i nuget:/workspaces/BlazorInteractive/src/BlazorInteractive/bin/Debug
+#i nuget:/workspaces/BlazorInteractive/src/BlazorInteractive/bin/Release
 #r "nuget:BlazorInteractive"
 
-#!csharp
-
 #!blazor
+
 <h1>Hello @name</h1>
 
 @code {

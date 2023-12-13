@@ -94,7 +94,7 @@ public sealed class BlazorInteractiveTests : IDisposable
     public async Task It_interprets_BlazorCode()
     {
         // Arrange
-        const string code = 
+        const string code =
             """
                 #!blazor
                 <h1>Hello world @name!</h1>
